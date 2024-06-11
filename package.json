@@ -1,0 +1,13 @@
+{
+  "name": "fastserve",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "install-backend": "npm install --prefix ./backend",
+    "start-backend": "npm run dev --prefix ./backend"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
