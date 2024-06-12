@@ -1,3 +1,5 @@
+import { METHOD_NOT_IMPLEMENTED } from "./error";
+
 export class NotificationDTO {
     type: string;
     notificationData: string[];
@@ -42,8 +44,8 @@ export class OrderDTO {
     orderItems: OrderItemDTO[];
 
     constructor(orderItems: OrderItemDTO[]) {
-        this.totalOrderPrice = this.getTotalOrderPrice(orderItems);
         this.orderItems = orderItems;
+        this.totalOrderPrice = this.getTotalOrderPrice(orderItems);
     };
 
     getTotalOrderPrice(orderItems: OrderItemDTO[]): number {
@@ -77,7 +79,7 @@ export class OrderItemDTO {
     }
 
     getMenuItem(): MenuItemDto {
-        throw new Error("Method not implemented.");
+        throw new Error(METHOD_NOT_IMPLEMENTED);
     }
 
 
