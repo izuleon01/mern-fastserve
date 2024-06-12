@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.get("/healthcheck", async (req: Request, res: Response) => {
     let server_status = "Server is running";
-    let db = mongoose.connection;
     let mongo_status;
     const state = mongoose.connection.readyState;
     if (state === 0) {
