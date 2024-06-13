@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import { MenuController } from "../controller/menu";
-import { MethodNotImplementedError } from "../shared/error";
 
 const router = express.Router();
 

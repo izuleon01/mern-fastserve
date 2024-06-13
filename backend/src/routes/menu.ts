@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import { MenuController } from "../controller/menu";
-import { METHOD_NOT_IMPLEMENTED, MethodNotImplementedError } from "../shared/error";
 
 const router = express.Router();
 
@@ -11,14 +10,8 @@ router.get("/", async (req: Request, res: Response) => {
         res.json({
             message: json_result
         });
-    } catch (error) {
-        if (error instanceof MethodNotImplementedError) {
-            res.status(error.status).json({ message: error.message });
-            return;
-        };
-        res.status(500).json({
-            error: error
-        });
+    } catch (error: any) {
+        res.status(error.status).json({ message: error.message });
     }
 });
 

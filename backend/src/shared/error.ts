@@ -22,3 +22,10 @@ export class NotFoundError extends DefaultError {
         this.message = message;
     }
 }
+
+export class invalidInputError extends DefaultError {
+    constructor(message = 'Invalid Input') {
+        super(400, message)
+        this.message = message;
+    }
+}

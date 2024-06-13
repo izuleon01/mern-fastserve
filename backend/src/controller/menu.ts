@@ -2,7 +2,8 @@ import { MenuModel } from "../models/menu";
 import { MenuItemModel, MenuItemTypes } from "../models/menuitem";
 import { OrderTypes } from "../models/order";
 import { OrderItemTypes } from "../models/orderitem";
-import { MethodNotImplementedError, NotFoundError } from "../shared/error";
+import { DefaultError, MethodNotImplementedError, NotFoundError, invalidInputError } from "../shared/error";
+import { isValidUUID } from "../shared/helper";
 import { MenuDTO, MenuItemDto, OrderDTO, OrderItemDTO } from "../shared/types";
 
 export class MenuController {
@@ -50,7 +51,15 @@ export class MenuController {
     }
 
     async getMenuItem(menuItemId: string): Promise<MenuItemDto> {
-        let menuItem = await MenuItemModel.findOne({ menuItem_id: menuItemId });
+        let menuItem;
+        if (!menuItemId || !isValidUUID(menuItemId)) {
+            throw new invalidInputError("Menu Item ID is null or invalid format")
+        }
+        try {
+            menuItem = await MenuItemModel.findOne({ menuItem_id: menuItemId });
+        } catch (error) {
+            throw new DefaultError(500, "Something Wrong with the database")
+        }
         if (!menuItem) {
             throw new NotFoundError("Menu Item " + menuItemId + " Not Found")
         };
