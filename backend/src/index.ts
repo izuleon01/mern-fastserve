@@ -6,16 +6,23 @@ import menuRoutes from './routes/menu';
 import orderRoutes from './routes/order';
 import mongoose from 'mongoose';
 
+// Initialize Express application
 const app = express();
-mongoose.connect(process.env.MONGODB_URI as string,{dbName:process.env.MONGODB_DBNAME});
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors())
 
-app.use("", healthcheckRoutes)
-app.use("/menu", menuRoutes)
-app.use("/order", orderRoutes)
+// Connect to MongoDB using environment variables
+mongoose.connect(process.env.MONGODB_URI as string, { dbName: process.env.MONGODB_DBNAME });
 
+// Middleware setup
+app.use(express.json());  // Parse JSON bodies
+app.use(express.urlencoded({ extended: true }));  // Parse URL-encoded bodies
+app.use(cors());  // Enable Cross-Origin Resource Sharing (CORS)
+
+// Routes setup
+app.use("", healthcheckRoutes);  // Healthcheck route
+app.use("/menu", menuRoutes);    // Menu-related routes
+app.use("/order", orderRoutes);  // Order-related routes
+
+// Start the server
 app.listen(process.env.PORT, () => {
-    console.log("server started")
+    console.log("Server started");
 });
