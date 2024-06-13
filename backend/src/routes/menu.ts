@@ -17,7 +17,46 @@ router.get("/", async (req: Request, res: Response) => {
             return;
         };
         res.status(500).json({
-            error: error
+            error: error.message
+        });
+    }
+});
+
+router.post("/", async (req: Request, res: Response) => {
+    try {
+        const { type, menuItems } = req.body;
+        const result = await new MenuController().addMenu(type, menuItems);
+        const json_result = JSON.parse(JSON.stringify(result));
+        res.json({
+            message: json_result
+        });
+    } catch (error: any) {
+        if (error.message == METHOD_NOT_IMPLEMENTED) {
+            res.status(501).json({ message: METHOD_NOT_IMPLEMENTED });
+            return;
+        };
+        res.status(500).json({
+            error: error.message
+        })
+    }
+});
+
+router.post("/item", async (req: Request, res: Response) => {
+    try {
+        const { name, description, price, imageUrl } = req.body;
+        const result = await new MenuController().addMenuItem(name, description, price, imageUrl);
+        const json_result = JSON.parse(JSON.stringify(result));
+        res.json({
+            message: json_result
+        });
+    } catch (error: any) {
+        if (error.message == METHOD_NOT_IMPLEMENTED) {
+            res.status(501).json({ message: METHOD_NOT_IMPLEMENTED });
+            return;
+        };
+        console.log(error)
+        res.status(500).json({
+            error: error.message
         });
     }
 });
@@ -36,7 +75,7 @@ router.get("/item/:menuItemId", async (req: Request, res: Response) => {
             return;
         };
         res.status(500).json({
-            error: error
+            error: error.message
         });
     }
 });
@@ -55,7 +94,7 @@ router.get("/:menuId", async (req: Request, res: Response) => {
             return;
         };
         res.status(500).json({
-            error: error
+            error: error.message
         });
     }
 });

@@ -1,4 +1,5 @@
-import { Model, Schema, model } from 'mongoose';
+import { randomUUID } from 'crypto';
+import { Model, Schema, model, Document } from 'mongoose';
 
 export interface MenuItemTypes extends Document {
     menuItem_id: string;
@@ -9,11 +10,11 @@ export interface MenuItemTypes extends Document {
 }
 
 export const menuItemSchema: Schema = new Schema({
-    menuItem_id: { type: String, required: true, unique: true },
+    menuItem_id: { type: String, required: true, unique: true, default: randomUUID },
     name: { type: String, required: true },
     description: { type: String },
     price: { type: Number, default: 0 },
     imageUrl: { type: String },
-}, { _id: false });
+});
 
 export const MenuItemModel: Model<MenuItemTypes> = model<MenuItemTypes>('Menu Item', menuItemSchema);
