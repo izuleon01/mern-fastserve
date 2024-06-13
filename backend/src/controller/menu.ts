@@ -2,7 +2,7 @@ import { MenuModel } from "../models/menu";
 import { MenuItemModel, MenuItemTypes } from "../models/menuitem";
 import { OrderTypes } from "../models/order";
 import { OrderItemTypes } from "../models/orderitem";
-import { DefaultError, MethodNotImplementedError, NotFoundError, invalidInputError } from "../shared/error";
+import { DefaultError, MethodNotImplementedError, NotFoundError, InvalidInputError } from "../shared/error";
 import { isValidUUID } from "../shared/helper";
 import { MenuDTO, MenuItemDto, OrderDTO, OrderItemDTO } from "../shared/types";
 
@@ -47,13 +47,47 @@ export class MenuController {
     }
 
     async getActiveMenu(): Promise<MenuDTO> {
-        throw new MethodNotImplementedError()
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinutes = now.getMinutes();
+        const currentTime = currentHour + ":" + currentMinutes;
+        let activeMenus;
+        try {
+            activeMenus = await MenuModel.find({
+                $expr: {
+                    $and: [
+                        { $lte: [{ $substr: ["$startTime", 0, 5] }, currentTime] },
+                        { $gte: [{ $substr: ["$endTime", 0, 5] }, currentTime] }
+                    ]
+                }
+            })
+        } catch (error) {
+            throw new DefaultError(500, "Something Wrong with the database")
+        }
+        if (activeMenus.length === 0) {
+            throw new NotFoundError("No active menu found")
+        }
+        let menuItems: MenuItemDto[] = [];
+        let type = "asd";
+        for (const activeMenu of activeMenus) {
+            const menuItemDetail = await this.getMenuItems(activeMenu.menu_id);
+            menuItems = menuItems.concat(menuItemDetail);
+            if (!type) {
+                type = activeMenu.type;
+            }
+        }
+        if (menuItems.length === 0) {
+            throw new NotFoundError("No menu item found")
+        }
+        return new MenuDTO(
+            type, menuItems
+        )
     }
 
     async getMenuItem(menuItemId: string): Promise<MenuItemDto> {
         let menuItem;
         if (!menuItemId || !isValidUUID(menuItemId)) {
-            throw new invalidInputError("Menu Item ID is null or invalid format")
+            throw new InvalidInputError("Menu Item ID is null or invalid format")
         }
         try {
             menuItem = await MenuItemModel.findOne({ menuItem_id: menuItemId });
@@ -75,7 +109,7 @@ export class MenuController {
         let menu;
         let menuItems: MenuItemDto[] = [];
         if (!menuId || !isValidUUID(menuId)) {
-            throw new invalidInputError("Menu ID is null or invalid format")
+            throw new InvalidInputError("Menu ID is null or invalid format")
         }
         try {
             menu = await MenuModel.findOne({ menu_id: menuId });
