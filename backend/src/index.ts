@@ -7,7 +7,7 @@ import orderRoutes from './routes/order';
 import mongoose from 'mongoose';
 
 const app = express();
-mongoose.connect(process.env.MONGODB_URI as string);
+mongoose.connect(process.env.MONGODB_URI as string,{dbName:process.env.MONGODB_DBNAME});
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors())

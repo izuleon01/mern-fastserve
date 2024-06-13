@@ -18,7 +18,7 @@ router.post("/addtoorder", async (req: Request, res: Response) => {
             return;
         }
         res.status(500).json({
-            error: error
+            error: error.message
         });
     }
 });
@@ -36,7 +36,7 @@ router.get("/", async (req: Request, res: Response) => {
             return;
         }
         res.status(500).json({
-            error: error
+            error: error.message
         });
     }
 });
@@ -55,7 +55,7 @@ router.get("/:menuItemId", async (req: Request, res: Response) => {
             return;
         }
         res.status(500).json({
-            error: error
+            error: error.message
         });
     }
 });
@@ -73,7 +73,7 @@ router.get("/item", async (req: Request, res: Response) => {
             return;
         }
         res.status(500).json({
-            error: error
+            error: error.message
         });
     }
 });
@@ -92,7 +92,7 @@ router.put("/item", async (req: Request, res: Response) => {
             return;
         }
         res.status(500).json({
-            error: error
+            error: error.message
         });
     }
 });
@@ -111,7 +111,7 @@ router.post("/item", async (req: Request, res: Response) => {
             return;
         }
         res.status(500).json({
-            error: error
+            error: error.message
         });
     }
 });
@@ -130,7 +130,7 @@ router.delete("/item", async (req: Request, res: Response) => {
             return;
         }
         res.status(500).json({
-            error: error
+            error: error.message
         });
     }
 });
