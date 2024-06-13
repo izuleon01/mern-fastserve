@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { MenuController } from "../controller/menu";
-import { METHOD_NOT_IMPLEMENTED } from "../shared/error";
+import { METHOD_NOT_IMPLEMENTED, MethodNotImplementedError } from "../shared/error";
 
 const router = express.Router();
 
@@ -11,13 +11,13 @@ router.get("/", async (req: Request, res: Response) => {
         res.json({
             message: json_result
         });
-    } catch (error: any) {
-        if (error.message == METHOD_NOT_IMPLEMENTED) {
-            res.status(501).json({ message: METHOD_NOT_IMPLEMENTED });
+    } catch (error) {
+        if (error instanceof MethodNotImplementedError) {
+            res.status(error.status).json({ message: error.message });
             return;
         };
         res.status(500).json({
-            error: error.message
+            error: error
         });
     }
 });
@@ -31,13 +31,7 @@ router.post("/", async (req: Request, res: Response) => {
             message: json_result
         });
     } catch (error: any) {
-        if (error.message == METHOD_NOT_IMPLEMENTED) {
-            res.status(501).json({ message: METHOD_NOT_IMPLEMENTED });
-            return;
-        };
-        res.status(500).json({
-            error: error.message
-        })
+        res.status(error.status).json({ message: error.message });
     }
 });
 
@@ -50,14 +44,7 @@ router.post("/item", async (req: Request, res: Response) => {
             message: json_result
         });
     } catch (error: any) {
-        if (error.message == METHOD_NOT_IMPLEMENTED) {
-            res.status(501).json({ message: METHOD_NOT_IMPLEMENTED });
-            return;
-        };
-        console.log(error)
-        res.status(500).json({
-            error: error.message
-        });
+        res.status(error.status).json({ message: error.message });
     }
 });
 
@@ -70,13 +57,7 @@ router.get("/item/:menuItemId", async (req: Request, res: Response) => {
             message: json_result
         });
     } catch (error: any) {
-        if (error.message == METHOD_NOT_IMPLEMENTED) {
-            res.status(501).json({ message: METHOD_NOT_IMPLEMENTED });
-            return;
-        };
-        res.status(500).json({
-            error: error.message
-        });
+        res.status(error.status).json({ message: error.message });
     }
 });
 
@@ -89,13 +70,7 @@ router.get("/:menuId", async (req: Request, res: Response) => {
             message: json_result
         });
     } catch (error: any) {
-        if (error.message == METHOD_NOT_IMPLEMENTED) {
-            res.status(501).json({ message: METHOD_NOT_IMPLEMENTED })
-            return;
-        };
-        res.status(500).json({
-            error: error.message
-        });
+        res.status(error.status).json({ message: error.message });
     }
 });
 
