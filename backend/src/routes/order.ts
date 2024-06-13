@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { MenuController } from "../controller/menu";
-import { METHOD_NOT_IMPLEMENTED } from "../shared/error";
+import { MethodNotImplementedError } from "../shared/error";
 
 const router = express.Router();
 
@@ -13,13 +13,7 @@ router.post("/addtoorder", async (req: Request, res: Response) => {
             message: json_result
         });
     } catch (error: any) {
-        if (error.message == METHOD_NOT_IMPLEMENTED) {
-            res.status(501).json({ message: METHOD_NOT_IMPLEMENTED });
-            return;
-        }
-        res.status(500).json({
-            error: error.message
-        });
+        res.status(error.status).json({ message: error.message });
     }
 });
 
@@ -31,13 +25,7 @@ router.get("/", async (req: Request, res: Response) => {
             message: json_result
         });
     } catch (error: any) {
-        if (error.message == METHOD_NOT_IMPLEMENTED) {
-            res.status(501).json({ message: METHOD_NOT_IMPLEMENTED });
-            return;
-        }
-        res.status(500).json({
-            error: error.message
-        });
+        res.status(error.status).json({ message: error.message });
     }
 });
 
@@ -50,13 +38,7 @@ router.get("/:menuItemId", async (req: Request, res: Response) => {
             message: json_result
         });
     } catch (error: any) {
-        if (error.message == METHOD_NOT_IMPLEMENTED) {
-            res.status(501).json({ message: METHOD_NOT_IMPLEMENTED });
-            return;
-        }
-        res.status(500).json({
-            error: error.message
-        });
+        res.status(error.status).json({ message: error.message });
     }
 });
 
@@ -68,13 +50,7 @@ router.get("/item", async (req: Request, res: Response) => {
             message: json_result
         });
     } catch (error: any) {
-        if (error.message == METHOD_NOT_IMPLEMENTED) {
-            res.status(501).json({ message: METHOD_NOT_IMPLEMENTED });
-            return;
-        }
-        res.status(500).json({
-            error: error.message
-        });
+        res.status(error.status).json({ message: error.message });
     }
 });
 
@@ -87,13 +63,7 @@ router.put("/item", async (req: Request, res: Response) => {
             message: json_result
         });
     } catch (error: any) {
-        if (error.message == METHOD_NOT_IMPLEMENTED) {
-            res.status(501).json({ message: METHOD_NOT_IMPLEMENTED });
-            return;
-        }
-        res.status(500).json({
-            error: error.message
-        });
+        res.status(error.status).json({ message: error.message });
     }
 });
 
@@ -106,13 +76,7 @@ router.post("/item", async (req: Request, res: Response) => {
             message: json_result
         });
     } catch (error: any) {
-        if (error.message == METHOD_NOT_IMPLEMENTED) {
-            res.status(501).json({ message: METHOD_NOT_IMPLEMENTED });
-            return;
-        }
-        res.status(500).json({
-            error: error.message
-        });
+        res.status(error.status).json({ message: error.message });
     }
 });
 
@@ -125,13 +89,7 @@ router.delete("/item", async (req: Request, res: Response) => {
             message: json_result
         });
     } catch (error: any) {
-        if (error.message == METHOD_NOT_IMPLEMENTED) {
-            res.status(501).json({ message: METHOD_NOT_IMPLEMENTED });
-            return;
-        }
-        res.status(500).json({
-            error: error.message
-        });
+        res.status(error.status).json({ message: error.message });
     }
 });
 

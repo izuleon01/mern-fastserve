@@ -1,4 +1,4 @@
-import { METHOD_NOT_IMPLEMENTED } from "./error";
+import { MethodNotImplementedError } from "./error";
 
 export class NotificationDTO {
     type: string;
@@ -79,7 +79,7 @@ export class OrderItemDTO {
     }
 
     getMenuItem(): MenuItemDto {
-        throw new Error(METHOD_NOT_IMPLEMENTED);
+        throw new MethodNotImplementedError()
     }
 
 
