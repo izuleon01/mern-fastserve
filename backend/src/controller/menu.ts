@@ -71,8 +71,25 @@ export class MenuController {
             menuItem.imageUrl);
     }
 
-    async getMenuItems(menuId: string): Promise<MenuItemTypes[]> {
-        throw new MethodNotImplementedError()
+    async getMenuItems(menuId: string): Promise<MenuItemDto[]> {
+        let menu;
+        let menuItems: MenuItemDto[] = [];
+        if (!menuId || !isValidUUID(menuId)) {
+            throw new invalidInputError("Menu ID is null or invalid format")
+        }
+        try {
+            menu = await MenuModel.findOne({ menu_id: menuId });
+        } catch (error) {
+            throw new DefaultError(500, "Something Wrong with the database")
+        }
+        if (!menu) {
+            throw new NotFoundError("Menu Item " + menuId + " Not Found")
+        };
+        for (const id of menu.menuItems) {
+            const menuItemDetail = await this.getMenuItem(id);
+            menuItems.push(menuItemDetail);
+        }
+        return menuItems
     }
 
     async addToOrder(menuItemId: string, quantity: number): Promise<OrderItemDTO> {
