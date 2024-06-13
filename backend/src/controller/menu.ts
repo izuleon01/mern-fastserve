@@ -68,7 +68,7 @@ export class MenuController {
             throw new NotFoundError("No active menu found")
         }
         let menuItems: MenuItemDto[] = [];
-        let type = "asd";
+        let type;
         for (const activeMenu of activeMenus) {
             const menuItemDetail = await this.getMenuItems(activeMenu.menu_id);
             menuItems = menuItems.concat(menuItemDetail);
