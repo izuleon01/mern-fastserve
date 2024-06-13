@@ -10,11 +10,16 @@ export interface MenuTypes extends Document {
 }
 
 export const menuSchema: Schema = new Schema({
-    menu_id: { type: String, required: true, unique: true, default: randomUUID },
+    menu_id: {
+        type: String,
+        required: true,
+        unique: true,
+        default: randomUUID,
+    },
     startTime: { type: String },
     endTime: { type: String },
     menuItems: { type: [String] },
-    type: { type: String, enum: ["breakfast", "lunch", "dinner"] }
+    type: { type: String, enum: ['breakfast', 'lunch', 'dinner'] },
 });
 
 menuSchema.pre('save', function (next) {
@@ -27,15 +32,30 @@ menuSchema.pre('save', function (next) {
 
     const [startHours, startMinutes] = this.startTime.split(':').map(Number);
     const [endHours, endMinutes] = this.endTime.split(':').map(Number);
-    if (startHours >= 8 && startMinutes <= 59 && endHours <= 11 && endMinutes <= 59) {
+    if (
+        startHours >= 8 &&
+        startMinutes <= 59 &&
+        endHours <= 11 &&
+        endMinutes <= 59
+    ) {
         this.type = 'breakfast';
         return next();
     }
-    if (startHours >= 12 && startMinutes <= 59 && endHours <= 16 && endHours <= 59) {
+    if (
+        startHours >= 12 &&
+        startMinutes <= 59 &&
+        endHours <= 16 &&
+        endHours <= 59
+    ) {
         this.type = 'lunch';
         return next();
     }
-    if (startHours >= 17 && startMinutes <= 59 && endHours <= 22 && endMinutes <= 0) {
+    if (
+        startHours >= 17 &&
+        startMinutes <= 59 &&
+        endHours <= 22 &&
+        endMinutes <= 0
+    ) {
         this.type = 'dinner';
         return next();
     }

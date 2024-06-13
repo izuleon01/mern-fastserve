@@ -11,4 +11,7 @@ export const orderItemSchema: Schema = new Schema({
     quantity: { type: Number, default: 0 },
 });
 
-export const OrderItemModel: Model<OrderItemTypes> = model<OrderItemTypes>('Order Item', orderItemSchema);
+export const OrderItemModel: Model<OrderItemTypes> = model<OrderItemTypes>(
+    'Order Item',
+    orderItemSchema
+);

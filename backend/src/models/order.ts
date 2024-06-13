@@ -11,8 +11,11 @@ export const orderSchema: Schema = new Schema({
         of: {
             type: Schema.Types.ObjectId,
             ref: 'Order Item',
-        }
-    }
+        },
+    },
 });
 
-export const OrderModel: Model<OrderTypes> = model<OrderTypes>('Order', orderSchema);
+export const OrderModel: Model<OrderTypes> = model<OrderTypes>(
+    'Order',
+    orderSchema
+);

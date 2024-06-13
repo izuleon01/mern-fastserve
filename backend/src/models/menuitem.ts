@@ -10,11 +10,19 @@ export interface MenuItemTypes extends Document {
 }
 
 export const menuItemSchema: Schema = new Schema({
-    menuItem_id: { type: String, required: true, unique: true, default: randomUUID },
+    menuItem_id: {
+        type: String,
+        required: true,
+        unique: true,
+        default: randomUUID,
+    },
     name: { type: String, required: true },
     description: { type: String },
     price: { type: Number, default: 0 },
     imageUrl: { type: String },
 });
 
-export const MenuItemModel: Model<MenuItemTypes> = model<MenuItemTypes>('Menu Item', menuItemSchema);
+export const MenuItemModel: Model<MenuItemTypes> = model<MenuItemTypes>(
+    'Menu Item',
+    menuItemSchema
+);
