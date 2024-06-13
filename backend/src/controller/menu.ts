@@ -3,7 +3,6 @@ import { MenuItemModel, MenuItemTypes } from "../models/menuitem";
 import { OrderTypes } from "../models/order";
 import { OrderItemTypes } from "../models/orderitem";
 import { METHOD_NOT_IMPLEMENTED } from "../shared/error";
-import { menuTimeIntoTime } from "../shared/menutype";
 import { MenuDTO, MenuItemDto, OrderDTO, OrderItemDTO } from "../shared/types";
 
 export class MenuController {
@@ -25,16 +24,13 @@ export class MenuController {
         );
     }
 
-    async addMenu(type: string, menuItemId: string[]): Promise<MenuDTO> {
-        const { startTime, endTime } = menuTimeIntoTime(type)
-        let menuItems = new Map();
+    async addMenu(startTime: string, endTime: string, menuItemId: string[]): Promise<MenuDTO> {
         let menuItemsDto: MenuItemDto[] = [];
         for (const id of menuItemId) {
             let menuItem = await MenuItemModel.findOne({ menuItem_id: id });
             if (!menuItem) {
                 throw new Error("Menu item " + id + " is nonexistent")
             };
-            menuItems.set(id, menuItem);
             menuItemsDto.push(
                 new MenuItemDto(
                     menuItem.menuItem_id,
@@ -45,13 +41,12 @@ export class MenuController {
             );
         }
         const newMenu = new MenuModel({
-            type:type,
             startTime: startTime,
             endTime: endTime,
-            menuItems: menuItems
+            menuItems: menuItemId
         });
         newMenu.save();
-        return new MenuDTO(type, menuItemsDto)
+        return new MenuDTO(newMenu.type, menuItemsDto)
     }
 
     async getActiveMenu(): Promise<MenuDTO> {

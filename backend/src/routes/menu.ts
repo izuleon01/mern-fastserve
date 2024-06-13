@@ -24,8 +24,8 @@ router.get("/", async (req: Request, res: Response) => {
 
 router.post("/", async (req: Request, res: Response) => {
     try {
-        const { type, menuItems } = req.body;
-        const result = await new MenuController().addMenu(type, menuItems);
+        const { startTime, endTime, menuItems } = req.body;
+        const result = await new MenuController().addMenu(startTime, endTime, menuItems);
         const json_result = JSON.parse(JSON.stringify(result));
         res.json({
             message: json_result
