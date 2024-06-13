@@ -45,7 +45,11 @@ export class MenuController {
             endTime: endTime,
             menuItems: menuItemId
         });
-        newMenu.save();
+        await newMenu.save();
+        if (!newMenu.type) {
+            await MenuModel.deleteOne({ _id: newMenu._id })
+            throw Error("invalid time format or time range")
+        }
         return new MenuDTO(newMenu.type, menuItemsDto)
     }
 

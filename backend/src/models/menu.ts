@@ -39,7 +39,6 @@ menuSchema.pre('save', function (next) {
         this.type = 'dinner';
         return next();
     }
-    this.type = 'unknown'
     next();
 });
 
