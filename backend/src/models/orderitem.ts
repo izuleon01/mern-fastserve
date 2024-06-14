@@ -1,13 +1,13 @@
-import { Model, Schema, model } from 'mongoose';
-import { MenuItemTypes } from './menuitem';
+import { Model, Schema, model, Document } from 'mongoose';
+import { OrderItemDTO } from '../shared/types';
 
 export interface OrderItemTypes extends Document {
-    menuItem_id: MenuItemTypes;
+    menuItem_id: OrderItemDTO;
     quantity: number;
 }
 
 export const orderItemSchema: Schema = new Schema({
-    menuItem_id: { type: Schema.Types.ObjectId, required: true },
+    menuItem: { type: Object, required: true },
     quantity: { type: Number, default: 0 },
 });
 

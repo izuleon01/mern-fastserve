@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { MenuModel } from '../models/menu';
 import { MenuItemModel, MenuItemTypes } from '../models/menuitem';
 import { OrderTypes } from '../models/order';
-import { OrderItemTypes } from '../models/orderitem';
+import { OrderItemModel, OrderItemTypes } from '../models/orderitem';
 import {
     DefaultError,
     MethodNotImplementedError,
@@ -174,7 +174,17 @@ export class MenuController {
         menuItemId: string,
         quantity: number
     ): Promise<OrderItemDTO> {
-        throw new MethodNotImplementedError();
+        let item = await this.getMenuItem(menuItemId);
+        try {
+            let newOrderItem = new OrderItemModel({
+                menuItem: item,
+                quantity: quantity,
+            });
+            await newOrderItem.save();
+        } catch (error) {
+            throw new DefaultError(500, 'Database Error');
+        }
+        return new OrderItemDTO(item, quantity);
     }
 
     async updateOrderItem(
