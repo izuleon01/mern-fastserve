@@ -414,11 +414,6 @@ describe('MenuController', () => {
                 )
             );
         });
-
-        it('should add quantity if item already exist', async () => {
-            // see update order item instead
-            expect(true).toEqual(true);
-        });
     });
 
     describe('getOrderItem', () => {
@@ -545,6 +540,84 @@ describe('MenuController', () => {
                     new OrderItemDTO(mockMenuItem, savedQuantity + 1)
                 )
             );
+        });
+    });
+    describe('addToOrder', () => {
+        it('should throw DefaultError on database error', async () => {
+            // Mock getMenuItem method to throw an error
+            OrderItemModel.findOne = jest
+                .fn()
+                .mockRejectedValue(new DefaultError(500, 'Database Error'));
+
+            // Mock parameters
+            const menuItemId = 'mock_menu_item_id';
+            const quantity = 2;
+
+            // Call the method and expect it to throw an error
+            await expect(
+                menuController.updateOrderItem(menuItemId, quantity)
+            ).rejects.toThrow(DefaultError);
+        });
+
+        it('should add quantity if exist', async () => {
+            const menuItemId = 'mock_menu_item_id';
+            const mockMenuItem = new MenuItemDto(
+                menuItemId,
+                'Mock Menu Item',
+                'Mock Description',
+                10.99,
+                'mock_image_url'
+            );
+            const savedQuantity = 2;
+            const mockOrderItem = {
+                menuItem: mockMenuItem,
+                quantity: savedQuantity,
+            };
+            OrderItemModel.findOne = jest.fn().mockResolvedValue(mockOrderItem);
+            const addedQuantity = 1;
+            const newMockOrderItem = {
+                menuItem: mockMenuItem,
+                quantity: savedQuantity + addedQuantity,
+            };
+            menuController.updateOrderItem = jest
+                .fn()
+                .mockResolvedValue(newMockOrderItem);
+            const result = await menuController.addToOrder(
+                mockMenuItem,
+                addedQuantity
+            );
+            expect(result).toEqual(newMockOrderItem);
+        });
+
+        it('should add order item', async () => {
+            const menuItemId = 'mock_menu_item_id';
+            const mockMenuItem = new MenuItemDto(
+                menuItemId,
+                'Mock Menu Item',
+                'Mock Description',
+                10.99,
+                'mock_image_url'
+            );
+            const savedQuantity = 2;
+            const mockOrderItem = {
+                menuItem: mockMenuItem,
+                quantity: savedQuantity,
+            };
+
+            OrderItemModel.findOne = jest.fn().mockResolvedValue(null);
+
+            OrderItemModel.prototype.save = jest
+                .fn()
+                .mockResolvedValue(mockOrderItem);
+
+            menuController.addOrderItem = jest
+                .fn()
+                .mockResolvedValue(mockOrderItem);
+            const result = await menuController.addToOrder(
+                mockMenuItem,
+                savedQuantity
+            );
+            expect(result).toEqual(mockOrderItem);
         });
     });
 });

@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import { MenuModel } from '../models/menu';
 import { MenuItemModel } from '../models/menuitem';
-import { OrderTypes } from '../models/order';
 import { OrderItemModel } from '../models/orderitem';
 import {
     DefaultError,
@@ -155,7 +154,23 @@ export class MenuController {
         menuItemId: string,
         quantity: number
     ): Promise<OrderItemDTO> {
-        throw new MethodNotImplementedError();
+        let orderItem;
+        try {
+            orderItem = await OrderItemModel.findOne({
+                'menuItem.menuItemId': menuItemId,
+            });
+        } catch (error) {
+            throw new DefaultError(500, 'Database Error');
+        }
+        if (orderItem) {
+            console.log('upda');
+            return await this.updateOrderItem(
+                menuItemId,
+                quantity + orderItem.quantity
+            );
+        } else {
+            return await this.addOrderItem(menuItemId, quantity);
+        }
     }
 
     async getOrder(): Promise<OrderDTO> {
@@ -199,23 +214,12 @@ export class MenuController {
             throw new InvalidInputError('Quantity has to be more than 0');
         }
         let item = await this.getMenuItem(menuItemId);
-        let savedOrderItem;
         try {
-            let orderItem = await OrderItemModel.findOne({
-                'menuItem.menuItemId': menuItemId,
+            let newOrderItem = new OrderItemModel({
+                menuItem: item,
+                quantity: quantity,
             });
-            if (orderItem) {
-                return this.updateOrderItem(
-                    menuItemId,
-                    quantity + orderItem.quantity
-                );
-            } else {
-                let newOrderItem = new OrderItemModel({
-                    menuItem: item,
-                    quantity: quantity,
-                });
-                savedOrderItem = await newOrderItem.save();
-            }
+            await newOrderItem.save();
         } catch (error) {
             throw new DefaultError(500, 'Database Error');
         }
@@ -238,16 +242,14 @@ export class MenuController {
                 throw new NotFoundError('orderItem not found');
             }
             orderItem.quantity = quantity;
-            console.log('1');
             await orderItem.save();
-            console.log('2');
         } catch (error) {
             throw new DefaultError(500, 'Database Error');
         }
         return new OrderItemDTO(item, quantity);
     }
 
-    async removeOrderItem(menuItemId: string): Promise<OrderTypes> {
+    async removeOrderItem(menuItemId: string): Promise<OrderDTO> {
         throw new MethodNotImplementedError();
     }
 
