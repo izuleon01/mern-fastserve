@@ -203,7 +203,24 @@ export class MenuController {
     }
 
     async getOrderItems(): Promise<OrderItemDTO[]> {
-        throw new MethodNotImplementedError();
+        try {
+            const orderItems = await OrderItemModel.find({});
+            return orderItems.map(
+                (item) =>
+                    new OrderItemDTO(
+                        new MenuItemDto(
+                            item.menuItem.menuItemId,
+                            item.menuItem.name,
+                            item.menuItem.description,
+                            item.menuItem.price,
+                            item.menuItem.imageUrl
+                        ),
+                        item.quantity
+                    )
+            );
+        } catch (error) {
+            throw new DefaultError(500, 'Database Error');
+        }
     }
 
     async addOrderItem(

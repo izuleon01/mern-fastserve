@@ -542,6 +542,7 @@ describe('MenuController', () => {
             );
         });
     });
+
     describe('addToOrder', () => {
         it('should throw DefaultError on database error', async () => {
             // Mock getMenuItem method to throw an error
@@ -619,5 +620,9 @@ describe('MenuController', () => {
             );
             expect(result).toEqual(mockOrderItem);
         });
+    });
+
+    describe('getOrderItems', () => {
+        it('should return all order items in database');
     });
 });
