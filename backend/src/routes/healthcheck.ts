@@ -1,5 +1,5 @@
-import express, { Request, Response } from "express";
-import mongoose from "mongoose";
+import express, { Request, Response } from 'express';
+import mongoose from 'mongoose';
 
 // Create a new Router instance from Express
 const router = express.Router();
@@ -8,9 +8,9 @@ const router = express.Router();
  * GET endpoint to perform a health check for the server and MongoDB.
  * Retrieves the current status of the server and MongoDB connection.
  */
-router.get("/healthcheck", async (req: Request, res: Response) => {
+router.get('/healthcheck', async (req: Request, res: Response) => {
     // Default server status
-    let server_status = "Server is running";
+    let server_status = 'Server is running';
 
     // Determine MongoDB connection status based on mongoose connection state
     let mongo_status;
@@ -30,9 +30,9 @@ router.get("/healthcheck", async (req: Request, res: Response) => {
     // Respond with JSON containing server and MongoDB status
     res.json({
         message: {
-            "Server status": server_status,
-            "MongoDB status": mongo_status
-        }
+            'Server status': server_status,
+            'MongoDB status': mongo_status,
+        },
     });
 });
 

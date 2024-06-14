@@ -1,5 +1,3 @@
-import { MethodNotImplementedError } from "./error";
-
 /**
  * Represents a notification data transfer object.
  */
@@ -54,7 +52,13 @@ export class MenuItemDto {
      * @param price - The price of the menu item.
      * @param imageUrl - The URL of the menu item's image.
      */
-    constructor(menuItemId: string, name: string, description: string, price: number, imageUrl: string) {
+    constructor(
+        menuItemId: string,
+        name: string,
+        description: string,
+        price: number,
+        imageUrl: string
+    ) {
         this.menuItemId = menuItemId;
         this.name = name;
         this.description = description;
@@ -86,7 +90,7 @@ export class OrderDTO {
      */
     getTotalOrderPrice(orderItems: OrderItemDTO[]): number {
         let sum = 0;
-        orderItems.forEach(orderItem => {
+        orderItems.forEach((orderItem) => {
             sum += orderItem.itemTotal;
         });
         return sum;

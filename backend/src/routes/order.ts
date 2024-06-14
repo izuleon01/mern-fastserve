@@ -1,5 +1,5 @@
-import express, { Request, Response } from "express";
-import { MenuController } from "../controller/menu";
+import express, { Request, Response } from 'express';
+import { MenuController } from '../controller/menu';
 
 // Create a new Router instance from Express
 const router = express.Router();
@@ -7,13 +7,16 @@ const router = express.Router();
 /**
  * POST endpoint to add a menu item to the order.
  */
-router.post("/addtoorder", async (req: Request, res: Response) => {
+router.post('/addtoorder', async (req: Request, res: Response) => {
     try {
         const { menuItemId, quantity } = req.body;
-        const result = await new MenuController().addToOrder(menuItemId, quantity);
+        const result = await new MenuController().addToOrder(
+            menuItemId,
+            quantity
+        );
         const json_result = JSON.parse(JSON.stringify(result));
         res.json({
-            message: json_result
+            message: json_result,
         });
     } catch (error: any) {
         res.status(error.status).json({ message: error.message });
@@ -23,12 +26,12 @@ router.post("/addtoorder", async (req: Request, res: Response) => {
 /**
  * GET endpoint to retrieve the entire order.
  */
-router.get("/", async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
     try {
         const result = await new MenuController().getOrder();
         const json_result = JSON.parse(JSON.stringify(result));
         res.json({
-            message: json_result
+            message: json_result,
         });
     } catch (error: any) {
         res.status(error.status).json({ message: error.message });
@@ -39,13 +42,13 @@ router.get("/", async (req: Request, res: Response) => {
  * GET endpoint to retrieve a specific order item by its menuItemId.
  * @param menuItemId - The ID of the menu item.
  */
-router.get("/:menuItemId", async (req: Request, res: Response) => {
+router.get('/:menuItemId', async (req: Request, res: Response) => {
     try {
         const menuItemId = req.params.menuItemId;
         const result = await new MenuController().getOrderItem(menuItemId);
         const json_result = JSON.parse(JSON.stringify(result));
         res.json({
-            message: json_result
+            message: json_result,
         });
     } catch (error: any) {
         res.status(error.status).json({ message: error.message });
@@ -55,12 +58,12 @@ router.get("/:menuItemId", async (req: Request, res: Response) => {
 /**
  * GET endpoint to retrieve all order items.
  */
-router.get("/item", async (req: Request, res: Response) => {
+router.get('/item', async (req: Request, res: Response) => {
     try {
         const result = await new MenuController().getOrderItems();
         const json_result = JSON.parse(JSON.stringify(result));
         res.json({
-            message: json_result
+            message: json_result,
         });
     } catch (error: any) {
         res.status(error.status).json({ message: error.message });
@@ -70,13 +73,16 @@ router.get("/item", async (req: Request, res: Response) => {
 /**
  * PUT endpoint to add an order item to the order.
  */
-router.put("/item", async (req: Request, res: Response) => {
+router.put('/item', async (req: Request, res: Response) => {
     try {
         const { menuItemId, quantity } = req.body;
-        const result = await new MenuController().addOrderItem(menuItemId, quantity);
+        const result = await new MenuController().addOrderItem(
+            menuItemId,
+            quantity
+        );
         const json_result = JSON.parse(JSON.stringify(result));
         res.json({
-            message: json_result
+            message: json_result,
         });
     } catch (error: any) {
         res.status(error.status).json({ message: error.message });
@@ -86,13 +92,16 @@ router.put("/item", async (req: Request, res: Response) => {
 /**
  * POST endpoint to update an existing order item.
  */
-router.post("/item", async (req: Request, res: Response) => {
+router.post('/item', async (req: Request, res: Response) => {
     try {
         const { menuItemId, quantity } = req.body;
-        const result = await new MenuController().updateOrderItem(menuItemId, quantity);
+        const result = await new MenuController().updateOrderItem(
+            menuItemId,
+            quantity
+        );
         const json_result = JSON.parse(JSON.stringify(result));
         res.json({
-            message: json_result
+            message: json_result,
         });
     } catch (error: any) {
         res.status(error.status).json({ message: error.message });
@@ -102,13 +111,13 @@ router.post("/item", async (req: Request, res: Response) => {
 /**
  * DELETE endpoint to remove an order item from the order.
  */
-router.delete("/item", async (req: Request, res: Response) => {
+router.delete('/item', async (req: Request, res: Response) => {
     try {
         const { menuItemId } = req.body;
         const result = await new MenuController().removeOrderItem(menuItemId);
         const json_result = JSON.parse(JSON.stringify(result));
         res.json({
-            message: json_result
+            message: json_result,
         });
     } catch (error: any) {
         res.status(error.status).json({ message: error.message });
