@@ -72,7 +72,9 @@ describe('MenuController', () => {
                 imageUrl: 'http://example.com/burger.jpg',
             };
 
-            MenuItemModel.findOne = jest.fn().mockResolvedValue(mockMenuItem);
+            menuController.getMenuItem = jest
+                .fn()
+                .mockResolvedValue(mockMenuItem);
             MenuModel.prototype.save = jest.fn().mockResolvedValue(mockMenu);
             MenuModel.deleteOne = jest.fn();
 
@@ -82,15 +84,17 @@ describe('MenuController', () => {
         });
 
         it('should add a new menu and return its details', async () => {
-            const mockMenuItem = {
-                menuItem_id: '1',
-                name: 'Burger',
-                description: 'Delicious burger',
-                price: 10,
-                imageUrl: 'http://example.com/burger.jpg',
-            };
+            const mockMenuItem = new MenuItemDto(
+                '1',
+                'Burger',
+                'Delicious burger',
+                10,
+                'http://example.com/burger.jpg'
+            );
 
-            MenuItemModel.findOne = jest.fn().mockResolvedValue(mockMenuItem);
+            menuController.getMenuItem = jest
+                .fn()
+                .mockResolvedValue(mockMenuItem);
 
             const mockMenu = {
                 _id: 'menu1',
@@ -123,55 +127,6 @@ describe('MenuController', () => {
         });
     });
 
-    describe('getActiveMenu', () => {
-        it('should throw an error if no active menu is found', async () => {
-            MenuModel.find = jest.fn().mockResolvedValue([]);
-
-            await expect(menuController.getActiveMenu()).rejects.toThrow(
-                NotFoundError
-            );
-        });
-
-        it('should return the active menu', async () => {
-            const mockMenu = [
-                {
-                    menu_id: 'menu1',
-                    startTime: '10:00',
-                    endTime: '22:00',
-                    menuItems: ['1'],
-                    type: 'Lunch',
-                },
-            ];
-            mockMenu[0].menu_id = mockMenu[0]['menu_id'];
-
-            const mockMenuItem = {
-                menuItem_id: '1',
-                name: 'Burger',
-                description: 'Delicious burger',
-                price: 10,
-                imageUrl: 'http://example.com/burger.jpg',
-            };
-
-            MenuModel.find = jest.fn().mockResolvedValue(mockMenu);
-            MenuModel.findOne = jest.fn().mockResolvedValue(mockMenu[0]);
-            MenuItemModel.findOne = jest.fn().mockResolvedValue(mockMenuItem);
-
-            const result = await menuController.getActiveMenu();
-
-            expect(result).toEqual(
-                new MenuDTO('Lunch', [
-                    new MenuItemDto(
-                        '1',
-                        'Burger',
-                        'Delicious burger',
-                        10,
-                        'http://example.com/burger.jpg'
-                    ),
-                ])
-            );
-        });
-    });
-
     describe('getMenuItem', () => {
         it('should throw an error if menu item ID is invalid', async () => {
             const { isValidUUID } = require('../../src/shared/helper');
@@ -191,15 +146,17 @@ describe('MenuController', () => {
         });
 
         it('should return the menu item details', async () => {
-            const mockMenuItem = {
-                menuItem_id: '1',
-                name: 'Burger',
-                description: 'Delicious burger',
-                price: 10,
-                imageUrl: 'http://example.com/burger.jpg',
-            };
+            const mockMenuItem = new MenuItemDto(
+                '1',
+                'Burger',
+                'Delicious burger',
+                10,
+                'http://example.com/burger.jpg'
+            );
 
-            MenuItemModel.findOne = jest.fn().mockResolvedValue(mockMenuItem);
+            menuController.getMenuItem = jest
+                .fn()
+                .mockResolvedValue(mockMenuItem);
 
             const result = await menuController.getMenuItem('1');
 
@@ -239,16 +196,18 @@ describe('MenuController', () => {
                 menuItems: ['1'],
             };
 
-            const mockMenuItem = {
-                menuItem_id: '1',
-                name: 'Burger',
-                description: 'Delicious burger',
-                price: 10,
-                imageUrl: 'http://example.com/burger.jpg',
-            };
+            const mockMenuItem = new MenuItemDto(
+                '1',
+                'Burger',
+                'Delicious burger',
+                10,
+                'http://example.com/burger.jpg'
+            );
 
             MenuModel.findOne = jest.fn().mockResolvedValue(mockMenu);
-            MenuItemModel.findOne = jest.fn().mockResolvedValue(mockMenuItem);
+            menuController.getMenuItem = jest
+                .fn()
+                .mockResolvedValue(mockMenuItem);
 
             const result = await menuController.getMenuItems('menu1');
 
@@ -261,6 +220,56 @@ describe('MenuController', () => {
                     'http://example.com/burger.jpg'
                 ),
             ]);
+        });
+    });
+
+    describe('getActiveMenu', () => {
+        it('should throw an error if no active menu is found', async () => {
+            MenuModel.find = jest.fn().mockResolvedValue([]);
+
+            await expect(menuController.getActiveMenu()).rejects.toThrow(
+                NotFoundError
+            );
+        });
+
+        it('should return the active menu', async () => {
+            const mockMenu = [
+                {
+                    menu_id: 'menu1',
+                    startTime: '10:00',
+                    endTime: '22:00',
+                    menuItems: ['1'],
+                    type: 'Lunch',
+                },
+            ];
+            mockMenu[0].menu_id = mockMenu[0]['menu_id'];
+
+            const mockMenuItem = new MenuItemDto(
+                '1',
+                'Burger',
+                'Delicious burger',
+                10,
+                'http://example.com/burger.jpg'
+            );
+
+            MenuModel.find = jest.fn().mockResolvedValue(mockMenu);
+            menuController.getMenuItems = jest
+                .fn()
+                .mockResolvedValue([mockMenuItem]);
+
+            const result = await menuController.getActiveMenu();
+
+            expect(result).toEqual(
+                new MenuDTO('Lunch', [
+                    new MenuItemDto(
+                        '1',
+                        'Burger',
+                        'Delicious burger',
+                        10,
+                        'http://example.com/burger.jpg'
+                    ),
+                ])
+            );
         });
     });
 });
