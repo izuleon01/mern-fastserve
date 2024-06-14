@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { MenuModel } from '../models/menu';
 import { MenuItemModel, MenuItemTypes } from '../models/menuitem';
 import { OrderTypes } from '../models/order';
@@ -58,9 +59,11 @@ export class MenuController {
     }
 
     async getActiveMenu(): Promise<MenuDTO> {
-        const now = new Date();
-        const currentHour = now.getHours();
-        const currentMinutes = now.getMinutes();
+        const db = mongoose.connection;
+        const result = await db.db.command({ isMaster: 1 });
+        const now = result.localTime;
+        const currentHour = String(now.getHours()).padStart(2, '0');
+        const currentMinutes = String(now.getMinutes()).padStart(2, '0');
         const currentTime = currentHour + ':' + currentMinutes;
         let activeMenus;
         try {
