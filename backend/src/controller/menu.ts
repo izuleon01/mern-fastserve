@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import { MenuModel } from '../models/menu';
-import { MenuItemModel, MenuItemTypes } from '../models/menuitem';
+import { MenuItemModel } from '../models/menuitem';
 import { OrderTypes } from '../models/order';
-import { OrderItemModel, OrderItemTypes } from '../models/orderitem';
+import { OrderItemModel } from '../models/orderitem';
 import {
     DefaultError,
     MethodNotImplementedError,
@@ -162,8 +162,33 @@ export class MenuController {
         throw new MethodNotImplementedError();
     }
 
-    async getOrderItem(menuItemId: string): Promise<OrderItemTypes> {
-        throw new MethodNotImplementedError();
+    async getOrderItem(menuItemId: string): Promise<OrderItemDTO> {
+        if (!menuItemId || !isValidUUID) {
+            throw new InvalidInputError('Invalid or null id');
+        }
+        let orderItems;
+        try {
+            orderItems = await OrderItemModel.find({
+                'menuItem.menuItemId': menuItemId,
+            });
+        } catch (error) {
+            throw new DefaultError(500, 'Database Error');
+        }
+        if (orderItems.length === 0) {
+            throw new NotFoundError('Order Item Not found');
+        }
+        const menuItem = new MenuItemDto(
+            orderItems[0].menuItem.menuItemId,
+            orderItems[0].menuItem.name,
+            orderItems[0].menuItem.description,
+            orderItems[0].menuItem.price,
+            orderItems[0].menuItem.imageUrl
+        );
+        let quantity = 0;
+        for (const item of orderItems) {
+            quantity += item.quantity;
+        }
+        return new OrderItemDTO(menuItem, quantity);
     }
 
     async getOrderItems(): Promise<OrderItemDTO[]> {
@@ -174,13 +199,17 @@ export class MenuController {
         menuItemId: string,
         quantity: number
     ): Promise<OrderItemDTO> {
+        if (quantity <= 0) {
+            throw new InvalidInputError('Quantity has to be more than 0');
+        }
         let item = await this.getMenuItem(menuItemId);
+        let savedOrderItem;
         try {
             let newOrderItem = new OrderItemModel({
                 menuItem: item,
                 quantity: quantity,
             });
-            await newOrderItem.save();
+            savedOrderItem = await newOrderItem.save();
         } catch (error) {
             throw new DefaultError(500, 'Database Error');
         }

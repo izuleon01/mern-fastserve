@@ -1,8 +1,8 @@
 import { Model, Schema, model, Document } from 'mongoose';
-import { OrderItemDTO } from '../shared/types';
+import { MenuItemDto } from '../shared/types';
 
 export interface OrderItemTypes extends Document {
-    menuItem_id: OrderItemDTO;
+    menuItem: MenuItemDto;
     quantity: number;
 }
 

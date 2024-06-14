@@ -42,7 +42,7 @@ router.get('/', async (req: Request, res: Response) => {
  * GET endpoint to retrieve a specific order item by its menuItemId.
  * @param menuItemId - The ID of the menu item.
  */
-router.get('/:menuItemId', async (req: Request, res: Response) => {
+router.get('/item/:menuItemId', async (req: Request, res: Response) => {
     try {
         const menuItemId = req.params.menuItemId;
         const result = await new MenuController().getOrderItem(menuItemId);

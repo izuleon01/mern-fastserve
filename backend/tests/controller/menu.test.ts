@@ -138,6 +138,22 @@ describe('MenuController', () => {
             ).rejects.toThrow(InvalidInputError);
         });
 
+        it('should throw DefaultError on database error', async () => {
+            // Mock getMenuItem method to throw an error
+            MenuItemModel.find = jest
+                .fn()
+                .mockRejectedValue(new DefaultError(500, 'Database Error'));
+
+            // Mock parameters
+            const menuItemId = 'mock_menu_item_id';
+            const quantity = 2;
+
+            // Call the method and expect it to throw an error
+            await expect(
+                menuController.addOrderItem(menuItemId, quantity)
+            ).rejects.toThrow(DefaultError);
+        });
+
         it('should throw an error if menu item is not found', async () => {
             MenuItemModel.findOne = jest.fn().mockResolvedValue(null);
 
@@ -181,6 +197,22 @@ describe('MenuController', () => {
             await expect(
                 menuController.getMenuItems('invalid-id')
             ).rejects.toThrow(InvalidInputError);
+        });
+
+        it('should throw DefaultError on database error', async () => {
+            // Mock getMenuItem method to throw an error
+            menuController.getMenuItem = jest
+                .fn()
+                .mockRejectedValue(new DefaultError(500, 'Database Error'));
+
+            // Mock parameters
+            const menuItemId = 'mock_menu_item_id';
+            const quantity = 2;
+
+            // Call the method and expect it to throw an error
+            await expect(
+                menuController.addOrderItem(menuItemId, quantity)
+            ).rejects.toThrow(DefaultError);
         });
 
         it('should throw an error if menu is not found', async () => {
@@ -252,6 +284,22 @@ describe('MenuController', () => {
                 value: originalDb,
                 writable: true,
             });
+        });
+
+        it('should throw DefaultError on database error', async () => {
+            // Mock getMenuItem method to throw an error
+            menuController.getMenuItem = jest
+                .fn()
+                .mockRejectedValue(new DefaultError(500, 'Database Error'));
+
+            // Mock parameters
+            const menuItemId = 'mock_menu_item_id';
+            const quantity = 2;
+
+            // Call the method and expect it to throw an error
+            await expect(
+                menuController.addOrderItem(menuItemId, quantity)
+            ).rejects.toThrow(DefaultError);
         });
 
         it('should return the active menu', async () => {
@@ -358,13 +406,86 @@ describe('MenuController', () => {
                 menuItemId,
                 quantity
             );
-            console.log(result);
 
             expect(result).toEqual(
                 expect.objectContaining(
                     new OrderItemDTO(mockMenuItem, quantity)
                 )
             );
+        });
+    });
+
+    describe('getOrderItem', () => {
+        it('should throw InvalidInputError if menuItemId is invalid or null', async () => {
+            const { isValidUUID } = require('../../src/shared/helper');
+            isValidUUID.mockReturnValue(false);
+            const invalidId = '';
+
+            await expect(
+                menuController.getOrderItem(invalidId)
+            ).rejects.toThrow(InvalidInputError);
+        });
+
+        it('should throw DefaultError on database error', async () => {
+            // Mock getMenuItem method to throw an error
+            OrderItemModel.find = jest
+                .fn()
+                .mockRejectedValue(new DefaultError(500, 'Database Error'));
+
+            // Mock parameters
+            const menuItemId = 'mock_menu_item_id';
+            const quantity = 2;
+
+            // Call the method and expect it to throw an error
+            await expect(
+                menuController.addOrderItem(menuItemId, quantity)
+            ).rejects.toThrow(DefaultError);
+        });
+
+        it('should throw NotFoundError if no order items are found', async () => {
+            OrderItemModel.find = jest.fn().mockResolvedValue([]);
+            const validId = '1';
+
+            await expect(menuController.getOrderItem(validId)).rejects.toThrow(
+                NotFoundError
+            );
+        });
+
+        it('should return OrderItemDTO if order items are found', async () => {
+            const orderItems = [
+                {
+                    menuItem: {
+                        menuItemId: '1',
+                        name: 'Burger',
+                        description: 'A delicious burger',
+                        price: 9.99,
+                        imageUrl: 'http://example.com/burger.jpg',
+                    },
+                    quantity: 2,
+                },
+                {
+                    menuItem: {
+                        menuItemId: '1',
+                        name: 'Burger',
+                        description: 'A delicious burger',
+                        price: 9.99,
+                        imageUrl: 'http://example.com/burger.jpg',
+                    },
+                    quantity: 3,
+                },
+            ];
+            OrderItemModel.find = jest.fn().mockResolvedValue(orderItems);
+            const expectedMenuItem = new MenuItemDto(
+                '1',
+                'Burger',
+                'A delicious burger',
+                9.99,
+                'http://example.com/burger.jpg'
+            );
+            const expectedResult = new OrderItemDTO(expectedMenuItem, 5);
+
+            const result = await menuController.getOrderItem('1');
+            expect(result).toEqual(expectedResult);
         });
     });
 });
