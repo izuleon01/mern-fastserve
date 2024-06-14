@@ -166,29 +166,25 @@ export class MenuController {
         if (!menuItemId || !isValidUUID) {
             throw new InvalidInputError('Invalid or null id');
         }
-        let orderItems;
+        let orderItem;
         try {
-            orderItems = await OrderItemModel.find({
+            orderItem = await OrderItemModel.findOne({
                 'menuItem.menuItemId': menuItemId,
             });
         } catch (error) {
             throw new DefaultError(500, 'Database Error');
         }
-        if (orderItems.length === 0) {
+        if (!orderItem) {
             throw new NotFoundError('Order Item Not found');
         }
         const menuItem = new MenuItemDto(
-            orderItems[0].menuItem.menuItemId,
-            orderItems[0].menuItem.name,
-            orderItems[0].menuItem.description,
-            orderItems[0].menuItem.price,
-            orderItems[0].menuItem.imageUrl
+            orderItem.menuItem.menuItemId,
+            orderItem.menuItem.name,
+            orderItem.menuItem.description,
+            orderItem.menuItem.price,
+            orderItem.menuItem.imageUrl
         );
-        let quantity = 0;
-        for (const item of orderItems) {
-            quantity += item.quantity;
-        }
-        return new OrderItemDTO(menuItem, quantity);
+        return new OrderItemDTO(menuItem, orderItem.quantity);
     }
 
     async getOrderItems(): Promise<OrderItemDTO[]> {
@@ -205,11 +201,21 @@ export class MenuController {
         let item = await this.getMenuItem(menuItemId);
         let savedOrderItem;
         try {
-            let newOrderItem = new OrderItemModel({
-                menuItem: item,
-                quantity: quantity,
+            let orderItem = await OrderItemModel.findOne({
+                'menuItem.menuItemId': menuItemId,
             });
-            savedOrderItem = await newOrderItem.save();
+            if (orderItem) {
+                return this.updateOrderItem(
+                    menuItemId,
+                    quantity + orderItem.quantity
+                );
+            } else {
+                let newOrderItem = new OrderItemModel({
+                    menuItem: item,
+                    quantity: quantity,
+                });
+                savedOrderItem = await newOrderItem.save();
+            }
         } catch (error) {
             throw new DefaultError(500, 'Database Error');
         }
@@ -220,7 +226,25 @@ export class MenuController {
         menuItemId: string,
         quantity: number
     ): Promise<OrderItemDTO> {
-        throw new MethodNotImplementedError();
+        if (quantity <= 0) {
+            throw new InvalidInputError('Quantity has to be more than 0');
+        }
+        let item = await this.getMenuItem(menuItemId);
+        try {
+            let orderItem = await OrderItemModel.findOne({
+                'menuItem.menuItemId': menuItemId,
+            });
+            if (!orderItem) {
+                throw new NotFoundError('orderItem not found');
+            }
+            orderItem.quantity = quantity;
+            console.log('1');
+            await orderItem.save();
+            console.log('2');
+        } catch (error) {
+            throw new DefaultError(500, 'Database Error');
+        }
+        return new OrderItemDTO(item, quantity);
     }
 
     async removeOrderItem(menuItemId: string): Promise<OrderTypes> {
