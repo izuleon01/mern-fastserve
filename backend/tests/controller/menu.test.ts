@@ -6,13 +6,14 @@ import {
     NotFoundError,
     InvalidInputError,
 } from '../../src/shared/error';
-import { MenuDTO, MenuItemDto } from '../../src/shared/types';
+import { MenuDTO, MenuItemDto, OrderItemDTO } from '../../src/shared/types';
+import { OrderItemModel } from '../../src/models/orderitem';
+import mongoose from 'mongoose';
 jest.mock('../../src/models/menu');
 jest.mock('../../src/models/menuitem');
 jest.mock('../../src/shared/helper', () => ({
     isValidUUID: jest.fn(),
 }));
-
 describe('MenuController', () => {
     let menuController;
 
@@ -225,14 +226,52 @@ describe('MenuController', () => {
 
     describe('getActiveMenu', () => {
         it('should throw an error if no active menu is found', async () => {
-            MenuModel.find = jest.fn().mockResolvedValue([]);
+            let originalDb = mongoose.connection.db;
 
+            // Mock the db object
+            Object.defineProperty(mongoose.connection, 'db', {
+                value: {
+                    command: jest.fn(),
+                },
+                writable: true,
+            });
+            const mockResult = {
+                localTime: new Date(),
+            };
+
+            // Set up the mock implementation
+            mongoose.connection.db.command = jest
+                .fn()
+                .mockResolvedValue(mockResult);
+
+            MenuModel.find = jest.fn().mockResolvedValue([]);
             await expect(menuController.getActiveMenu()).rejects.toThrow(
                 NotFoundError
             );
+            Object.defineProperty(mongoose.connection, 'db', {
+                value: originalDb,
+                writable: true,
+            });
         });
 
         it('should return the active menu', async () => {
+            let originalDb = mongoose.connection.db;
+
+            // Mock the db object
+            Object.defineProperty(mongoose.connection, 'db', {
+                value: {
+                    command: jest.fn(),
+                },
+                writable: true,
+            });
+            const mockResult = {
+                localTime: new Date(),
+            };
+
+            // Set up the mock implementation
+            mongoose.connection.db.command = jest
+                .fn()
+                .mockResolvedValue(mockResult);
             const mockMenu = [
                 {
                     menu_id: 'menu1',
@@ -269,6 +308,62 @@ describe('MenuController', () => {
                         'http://example.com/burger.jpg'
                     ),
                 ])
+            );
+            Object.defineProperty(mongoose.connection, 'db', {
+                value: originalDb,
+                writable: true,
+            });
+        });
+    });
+
+    describe('addOrderItem', () => {
+        it('should throw DefaultError on database error', async () => {
+            // Mock getMenuItem method to throw an error
+            menuController.getMenuItem = jest
+                .fn()
+                .mockRejectedValue(new DefaultError(500, 'Database Error'));
+
+            // Mock parameters
+            const menuItemId = 'mock_menu_item_id';
+            const quantity = 2;
+
+            // Call the method and expect it to throw an error
+            await expect(
+                menuController.addOrderItem(menuItemId, quantity)
+            ).rejects.toThrow(DefaultError);
+        });
+
+        it('should add an order item successfully', async () => {
+            // Mock getMenuItem method
+            const mockMenuItem = new MenuItemDto(
+                'mock_menu_item_id',
+                'Mock Menu Item',
+                'Mock Description',
+                10.99,
+                'mock_image_url'
+            );
+            menuController.getMenuItem = jest
+                .fn()
+                .mockResolvedValue(mockMenuItem);
+
+            // Mock parameters
+            const menuItemId = 'mock_menu_item_id';
+            const quantity = 2;
+            OrderItemModel.prototype.save = jest
+                .fn()
+                .mockResolvedValue({ mockMenuItem, quantity });
+
+            // Call the method
+            const result = await menuController.addOrderItem(
+                menuItemId,
+                quantity
+            );
+            console.log(result);
+
+            expect(result).toEqual(
+                expect.objectContaining(
+                    new OrderItemDTO(mockMenuItem, quantity)
+                )
             );
         });
     });
