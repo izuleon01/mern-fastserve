@@ -174,7 +174,13 @@ export class MenuController {
     }
 
     async getOrder(): Promise<OrderDTO> {
-        throw new MethodNotImplementedError();
+        let orderItems;
+        try {
+            orderItems = await this.getOrderItems();
+        } catch (error) {
+            throw new DefaultError(500, 'Database Error');
+        }
+        return await new OrderDTO(orderItems);
     }
 
     async getOrderItem(menuItemId: string): Promise<OrderItemDTO> {

@@ -6,7 +6,12 @@ import {
     NotFoundError,
     InvalidInputError,
 } from '../../src/shared/error';
-import { MenuDTO, MenuItemDto, OrderItemDTO } from '../../src/shared/types';
+import {
+    MenuDTO,
+    MenuItemDto,
+    OrderDTO,
+    OrderItemDTO,
+} from '../../src/shared/types';
 import { OrderItemModel, orderItemSchema } from '../../src/models/orderitem';
 import mongoose from 'mongoose';
 jest.mock('../../src/models/menu');
@@ -623,6 +628,41 @@ describe('MenuController', () => {
     });
 
     describe('getOrderItems', () => {
-        it('should return all order items in database');
+        it('should throw DefaultError on database error', async () => {
+            // Mock getMenuItem method to throw an error
+            OrderItemModel.find = jest
+                .fn()
+                .mockRejectedValue(new DefaultError(500, 'Database Error'));
+
+            // Call the method and expect it to throw an error
+            await expect(menuController.getOrderItems()).rejects.toThrow(
+                DefaultError
+            );
+        });
+
+        it('should return all order items in database', async () => {
+            OrderItemModel.find = jest.fn().mockResolvedValue([]);
+            const result = await menuController.getOrderItems();
+            expect(result).toEqual([]);
+        });
+    });
+    describe('getOrder', () => {
+        it('should throw DefaultError on database error', async () => {
+            // Mock getMenuItem method to throw an error
+            OrderItemModel.find = jest
+                .fn()
+                .mockRejectedValue(new DefaultError(500, 'Database Error'));
+
+            // Call the method and expect it to throw an error
+            await expect(menuController.getOrderItems()).rejects.toThrow(
+                DefaultError
+            );
+        });
+
+        it('should return all order items in database in form of order DTO', async () => {
+            OrderItemModel.find = jest.fn().mockResolvedValue([]);
+            const result = await menuController.getOrder();
+            expect(result).toEqual(new OrderDTO([]));
+        });
     });
 });
