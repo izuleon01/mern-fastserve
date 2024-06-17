@@ -646,6 +646,7 @@ describe('MenuController', () => {
             expect(result).toEqual([]);
         });
     });
+
     describe('getOrder', () => {
         it('should throw DefaultError on database error', async () => {
             // Mock getMenuItem method to throw an error

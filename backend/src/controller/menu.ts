@@ -272,11 +272,20 @@ export class MenuController {
         return new OrderItemDTO(item, quantity);
     }
 
+    async updateOrder(menuItemId: string, quantity: number): Promise<OrderDTO> {
+        await this.updateOrderItem(menuItemId, quantity);
+        return this.getOrder();
+    }
+
     async removeOrderItem(menuItemId: string): Promise<OrderDTO> {
-        throw new MethodNotImplementedError();
+        const deletedOrder = await this.getOrderItem(menuItemId);
+        await OrderItemModel.deleteOne({
+            'menuItem.menuItemId': deletedOrder.menuItemId,
+        });
+        return await this.getOrder();
     }
 
     async confirmOrder(): Promise<void> {
-        throw new MethodNotImplementedError();
+        await OrderItemModel.deleteMany({});
     }
 }

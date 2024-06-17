@@ -38,6 +38,33 @@ router.get('/', async (req: Request, res: Response) => {
     }
 });
 
+router.post('/', async (req: Request, res: Response) => {
+    try {
+        const { menuItemId, quantity } = req.body;
+        const result = await new MenuController().updateOrder(
+            menuItemId,
+            quantity
+        );
+        const json_result = JSON.parse(JSON.stringify(result));
+        res.json({
+            message: json_result,
+        });
+    } catch (error: any) {
+        res.status(error.status).json({ message: error.message });
+    }
+});
+
+router.get('/confirm-order', async (req: Request, res: Response) => {
+    try {
+        await new MenuController().confirmOrder();
+        res.json({
+            message: 'Order Confirmed',
+        });
+    } catch (error: any) {
+        res.status(error.status).json({ message: error.message });
+    }
+});
+
 /**
  * GET endpoint to retrieve a specific order item by its menuItemId.
  * @param menuItemId - The ID of the menu item.
