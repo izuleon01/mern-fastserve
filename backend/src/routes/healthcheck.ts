@@ -16,15 +16,15 @@ router.get('/healthcheck', async (req: Request, res: Response) => {
     let mongo_status;
     const state = mongoose.connection.readyState;
     if (state === 0) {
-        mongo_status = 'MongoDB is disconnected';
+        mongo_status = 'MongoDB is disconnected'; // MongoDB connection is disconnected
     } else if (state === 1) {
-        mongo_status = 'MongoDB is connected';
+        mongo_status = 'MongoDB is connected'; // MongoDB connection is connected
     } else if (state === 2) {
-        mongo_status = 'MongoDB is connecting';
+        mongo_status = 'MongoDB is connecting'; // MongoDB connection is in the process of connecting
     } else if (state === 3) {
-        mongo_status = 'MongoDB is disconnecting';
+        mongo_status = 'MongoDB is disconnecting'; // MongoDB connection is in the process of disconnecting
     } else {
-        mongo_status = 'MongoDB connection state is unknown';
+        mongo_status = 'MongoDB connection state is unknown'; // MongoDB connection state is unknown
     }
 
     // Respond with JSON containing server and MongoDB status

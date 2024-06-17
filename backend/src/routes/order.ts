@@ -6,6 +6,8 @@ const router = express.Router();
 
 /**
  * POST endpoint to add a menu item to the order.
+ * @param req.body.menuItemId - The ID of the menu item to add to the order.
+ * @param req.body.quantity - The quantity of the menu item to add to the order.
  */
 router.post('/item', async (req: Request, res: Response) => {
     try {
@@ -38,6 +40,11 @@ router.get('/', async (req: Request, res: Response) => {
     }
 });
 
+/**
+ * POST endpoint to update the quantity of a menu item in the order.
+ * @param req.body.menuItemId - The ID of the menu item to update in the order.
+ * @param req.body.quantity - The new quantity of the menu item.
+ */
 router.post('/', async (req: Request, res: Response) => {
     try {
         const { menuItemId, quantity } = req.body;
@@ -54,6 +61,10 @@ router.post('/', async (req: Request, res: Response) => {
     }
 });
 
+/**
+ * GET endpoint to confirm the order.
+ * Confirms the current order.
+ */
 router.get('/confirm-order', async (req: Request, res: Response) => {
     try {
         await new MenuController().confirmOrder();
@@ -67,7 +78,7 @@ router.get('/confirm-order', async (req: Request, res: Response) => {
 
 /**
  * GET endpoint to retrieve a specific order item by its menuItemId.
- * @param menuItemId - The ID of the menu item.
+ * @param req.params.menuItemId - The ID of the menu item.
  */
 router.get('/item/:menuItemId', async (req: Request, res: Response) => {
     try {
@@ -99,6 +110,7 @@ router.get('/item', async (req: Request, res: Response) => {
 
 /**
  * DELETE endpoint to remove an order item from the order.
+ * @param req.body.menuItemId - The ID of the menu item to remove from the order.
  */
 router.delete('/item', async (req: Request, res: Response) => {
     try {

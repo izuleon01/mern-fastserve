@@ -19,6 +19,10 @@ jest.mock('../../src/models/menuitem');
 jest.mock('../../src/shared/helper', () => ({
     isValidUUID: jest.fn(),
 }));
+
+/**
+ * Unit tests for MenuController class.
+ */
 describe('MenuController', () => {
     let menuController;
 
@@ -28,7 +32,13 @@ describe('MenuController', () => {
         isValidUUID.mockReturnValue(true);
     });
 
+    /**
+     * Test suite for addMenuItem method.
+     */
     describe('addMenuItem', () => {
+        /**
+         * Test case: should add a new menu item and return its details.
+         */
         it('should add a new menu item and return its details', async () => {
             const mockMenuItem = {
                 menuItem_id: '1',
@@ -62,7 +72,13 @@ describe('MenuController', () => {
         });
     });
 
+    /**
+     * Test suite for addMenu method.
+     */
     describe('addMenu', () => {
+        /**
+         * Test case: should throw an error if menu type is invalid.
+         */
         it('should throw an error if menu type is invalid', async () => {
             const mockMenu = {
                 _id: 'menu1',
@@ -89,6 +105,9 @@ describe('MenuController', () => {
             ).rejects.toThrow('invalid time format or time range');
         });
 
+        /**
+         * Test case: should add a new menu and return its details.
+         */
         it('should add a new menu and return its details', async () => {
             const mockMenuItem = new MenuItemDto(
                 '1',
@@ -133,7 +152,13 @@ describe('MenuController', () => {
         });
     });
 
+    /**
+     * Test suite for getMenuItem method.
+     */
     describe('getMenuItem', () => {
+        /**
+         * Test case: should throw an error if menu item ID is invalid.
+         */
         it('should throw an error if menu item ID is invalid', async () => {
             const { isValidUUID } = require('../../src/shared/helper');
             isValidUUID.mockReturnValue(false);
@@ -143,6 +168,9 @@ describe('MenuController', () => {
             ).rejects.toThrow(InvalidInputError);
         });
 
+        /**
+         * Test case: should throw DefaultError on database error.
+         */
         it('should throw DefaultError on database error', async () => {
             // Mock getMenuItem method to throw an error
             MenuItemModel.find = jest
@@ -159,6 +187,9 @@ describe('MenuController', () => {
             ).rejects.toThrow(DefaultError);
         });
 
+        /**
+         * Test case: should throw an error if menu item is not found.
+         */
         it('should throw an error if menu item is not found', async () => {
             MenuItemModel.findOne = jest.fn().mockResolvedValue(null);
 
@@ -167,6 +198,9 @@ describe('MenuController', () => {
             );
         });
 
+        /**
+         * Test case: should return the menu item details.
+         */
         it('should return the menu item details', async () => {
             const mockMenuItem = new MenuItemDto(
                 '1',
@@ -194,7 +228,13 @@ describe('MenuController', () => {
         });
     });
 
+    /**
+     * Test suite for MenuController's getMenuItems method.
+     */
     describe('getMenuItems', () => {
+        /**
+         * Test case: should throw an error if menu ID is invalid.
+         */
         it('should throw an error if menu ID is invalid', async () => {
             const { isValidUUID } = require('../../src/shared/helper');
             isValidUUID.mockReturnValue(false);
@@ -204,8 +244,11 @@ describe('MenuController', () => {
             ).rejects.toThrow(InvalidInputError);
         });
 
+        /**
+         * Test case: should throw DefaultError on database error.
+         */
         it('should throw DefaultError on database error', async () => {
-            // Mock getMenuItem method to throw an error
+            // Mock findOne method to throw an error
             MenuModel.findOne = jest
                 .fn()
                 .mockRejectedValue(new DefaultError(500, 'Database Error'));
@@ -220,6 +263,9 @@ describe('MenuController', () => {
             ).rejects.toThrow(DefaultError);
         });
 
+        /**
+         * Test case: should throw an error if menu is not found.
+         */
         it('should throw an error if menu is not found', async () => {
             MenuModel.findOne = jest.fn().mockResolvedValue(null);
 
@@ -228,6 +274,9 @@ describe('MenuController', () => {
             );
         });
 
+        /**
+         * Test case: should return the list of menu items.
+         */
         it('should return the list of menu items', async () => {
             const mockMenu = {
                 menu_id: 'menu1',
@@ -261,7 +310,13 @@ describe('MenuController', () => {
         });
     });
 
+    /**
+     * Test suite for MenuController's getActiveMenu method.
+     */
     describe('getActiveMenu', () => {
+        /**
+         * Test case: should throw an error if no active menu is found.
+         */
         it('should throw an error if no active menu is found', async () => {
             let originalDb = mongoose.connection.db;
 
@@ -291,8 +346,11 @@ describe('MenuController', () => {
             });
         });
 
+        /**
+         * Test case: should throw DefaultError on database error.
+         */
         it('should throw DefaultError on database error', async () => {
-            // Mock getMenuItem method to throw an error
+            // Mock getMenuItems method to throw an error
             menuController.getMenuItems = jest
                 .fn()
                 .mockRejectedValue(new DefaultError(500, 'Database Error'));
@@ -307,6 +365,9 @@ describe('MenuController', () => {
             ).rejects.toThrow(DefaultError);
         });
 
+        /**
+         * Test case: should return the active menu.
+         */
         it('should return the active menu', async () => {
             let originalDb = mongoose.connection.db;
 
@@ -369,9 +430,15 @@ describe('MenuController', () => {
         });
     });
 
+    /**
+     * Test suite for MenuController's addOrderItem method.
+     */
     describe('addOrderItem', () => {
+        /**
+         * Test case: should throw DefaultError on database error.
+         */
         it('should throw DefaultError on database error', async () => {
-            // Mock getMenuItem method to throw an error
+            // Mock save method to throw an error
             OrderItemModel.prototype.save = jest
                 .fn()
                 .mockRejectedValue(new DefaultError(500, 'Database Error'));
@@ -386,6 +453,9 @@ describe('MenuController', () => {
             ).rejects.toThrow(DefaultError);
         });
 
+        /**
+         * Test case: should add an order item successfully.
+         */
         it('should add an order item successfully', async () => {
             // Mock getMenuItem method
             const menuItemId = 'mock_menu_item_id';
@@ -403,6 +473,8 @@ describe('MenuController', () => {
             // Mock parameters
             const quantity = 2;
             OrderItemModel.findOne = jest.fn().mockResolvedValue(null);
+
+            // Mock save method
             OrderItemModel.prototype.save = jest
                 .fn()
                 .mockResolvedValue({ mockMenuItem, quantity });
@@ -420,8 +492,13 @@ describe('MenuController', () => {
             );
         });
     });
-
+    /**
+     * Test suite for MenuController's getOrderItem method.
+     */
     describe('getOrderItem', () => {
+        /**
+         * Test case: should throw InvalidInputError if menuItemId is invalid or null.
+         */
         it('should throw InvalidInputError if menuItemId is invalid or null', async () => {
             const { isValidUUID } = require('../../src/shared/helper');
             isValidUUID.mockReturnValue(false);
@@ -432,8 +509,11 @@ describe('MenuController', () => {
             ).rejects.toThrow(InvalidInputError);
         });
 
+        /**
+         * Test case: should throw DefaultError on database error.
+         */
         it('should throw DefaultError on database error', async () => {
-            // Mock getMenuItem method to throw an error
+            // Mock find method to throw an error
             OrderItemModel.find = jest
                 .fn()
                 .mockRejectedValue(new DefaultError(500, 'Database Error'));
@@ -448,6 +528,9 @@ describe('MenuController', () => {
             ).rejects.toThrow(DefaultError);
         });
 
+        /**
+         * Test case: should throw NotFoundError if no order items are found.
+         */
         it('should throw NotFoundError if no order items are found', async () => {
             OrderItemModel.find = jest.fn().mockResolvedValue([]);
             const validId = '1';
@@ -457,6 +540,9 @@ describe('MenuController', () => {
             );
         });
 
+        /**
+         * Test case: should return OrderItemDTO if order items are found.
+         */
         it('should return OrderItemDTO if order items are found', async () => {
             const orderItems = {
                 menuItem: {
@@ -483,7 +569,13 @@ describe('MenuController', () => {
         });
     });
 
+    /**
+     * Test suite for MenuController's updateOrderItem method.
+     */
     describe('updateOrderItem', () => {
+        /**
+         * Test case: should throw InvalidInputError if menuItemId is invalid or null.
+         */
         it('should throw InvalidInputError if menuItemId is invalid or null', async () => {
             const { isValidUUID } = require('../../src/shared/helper');
             isValidUUID.mockReturnValue(false);
@@ -494,8 +586,11 @@ describe('MenuController', () => {
             ).rejects.toThrow(InvalidInputError);
         });
 
+        /**
+         * Test case: should throw DefaultError on database error.
+         */
         it('should throw DefaultError on database error', async () => {
-            // Mock getMenuItem method to throw an error
+            // Mock findOne method to throw an error
             OrderItemModel.findOne = jest
                 .fn()
                 .mockRejectedValue(new DefaultError(500, 'Database Error'));
@@ -510,6 +605,9 @@ describe('MenuController', () => {
             ).rejects.toThrow(DefaultError);
         });
 
+        /**
+         * Test case: should edit an order item successfully.
+         */
         it('should edit an order item successfully', async () => {
             // Mock getMenuItem method
             const menuItemId = 'mock_menu_item_id';
@@ -530,10 +628,10 @@ describe('MenuController', () => {
                 .fn()
                 .mockResolvedValue(mockMenuItem);
 
-            // Mock parameters
-
+            // Mock findOne method
             OrderItemModel.findOne = jest.fn().mockResolvedValue(mockOrderItem);
             mockOrderItem.save = jest.fn().mockResolvedValue(null);
+
             // Call the method
             const result = await menuController.updateOrderItem(
                 menuItemId,
@@ -548,9 +646,15 @@ describe('MenuController', () => {
         });
     });
 
+    /**
+     * Test suite for MenuController's addToOrder method.
+     */
     describe('addToOrder', () => {
+        /**
+         * Test case: should throw DefaultError on database error.
+         */
         it('should throw DefaultError on database error', async () => {
-            // Mock getMenuItem method to throw an error
+            // Mock findOne method to throw an error
             OrderItemModel.findOne = jest
                 .fn()
                 .mockRejectedValue(new DefaultError(500, 'Database Error'));
@@ -565,7 +669,10 @@ describe('MenuController', () => {
             ).rejects.toThrow(DefaultError);
         });
 
-        it('should add quantity if exist', async () => {
+        /**
+         * Test case: should add quantity if order item exists.
+         */
+        it('should add quantity if order item exists', async () => {
             const menuItemId = 'mock_menu_item_id';
             const mockMenuItem = new MenuItemDto(
                 menuItemId,
@@ -595,7 +702,10 @@ describe('MenuController', () => {
             expect(result).toEqual(newMockOrderItem);
         });
 
-        it('should add order item', async () => {
+        /**
+         * Test case: should add new order item if it does not exist.
+         */
+        it('should add order item if it does not exist', async () => {
             const menuItemId = 'mock_menu_item_id';
             const mockMenuItem = new MenuItemDto(
                 menuItemId,
@@ -627,9 +737,15 @@ describe('MenuController', () => {
         });
     });
 
+    /**
+     * Test suite for MenuController's getOrderItems method.
+     */
     describe('getOrderItems', () => {
+        /**
+         * Test case: should throw DefaultError on database error.
+         */
         it('should throw DefaultError on database error', async () => {
-            // Mock getMenuItem method to throw an error
+            // Mock find method to throw an error
             OrderItemModel.find = jest
                 .fn()
                 .mockRejectedValue(new DefaultError(500, 'Database Error'));
@@ -640,6 +756,9 @@ describe('MenuController', () => {
             );
         });
 
+        /**
+         * Test case: should return all order items in database.
+         */
         it('should return all order items in database', async () => {
             OrderItemModel.find = jest.fn().mockResolvedValue([]);
             const result = await menuController.getOrderItems();
@@ -647,9 +766,15 @@ describe('MenuController', () => {
         });
     });
 
+    /**
+     * Test suite for MenuController's getOrder method.
+     */
     describe('getOrder', () => {
+        /**
+         * Test case: should throw DefaultError on database error.
+         */
         it('should throw DefaultError on database error', async () => {
-            // Mock getMenuItem method to throw an error
+            // Mock find method to throw an error
             OrderItemModel.find = jest
                 .fn()
                 .mockRejectedValue(new DefaultError(500, 'Database Error'));
@@ -660,6 +785,9 @@ describe('MenuController', () => {
             );
         });
 
+        /**
+         * Test case: should return all order items in database in form of order DTO.
+         */
         it('should return all order items in database in form of order DTO', async () => {
             OrderItemModel.find = jest.fn().mockResolvedValue([]);
             const result = await menuController.getOrder();

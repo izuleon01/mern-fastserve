@@ -5,7 +5,8 @@ import { MenuController } from '../controller/menu';
 const router = express.Router();
 
 /**
- * GET endpoint to retrieve active menu.
+ * GET endpoint to retrieve the active menu.
+ * Fetches the currently active menu from the MenuController.
  */
 router.get('/', async (req: Request, res: Response) => {
     try {
@@ -21,6 +22,9 @@ router.get('/', async (req: Request, res: Response) => {
 
 /**
  * POST endpoint to add a new menu.
+ * @param req.body.startTime - The start time of the menu.
+ * @param req.body.endTime - The end time of the menu.
+ * @param req.body.menuItems - Array of menu item IDs associated with the menu.
  */
 router.post('/', async (req: Request, res: Response) => {
     try {
@@ -41,6 +45,10 @@ router.post('/', async (req: Request, res: Response) => {
 
 /**
  * POST endpoint to add a new menu item.
+ * @param req.body.name - The name of the menu item.
+ * @param req.body.description - The description of the menu item.
+ * @param req.body.price - The price of the menu item.
+ * @param req.body.imageUrl - The image URL of the menu item.
  */
 router.post('/item', async (req: Request, res: Response) => {
     try {
@@ -62,7 +70,7 @@ router.post('/item', async (req: Request, res: Response) => {
 
 /**
  * GET endpoint to retrieve a menu item by its menuItemId.
- * @param menuItemId - The ID of the menu item.
+ * @param req.params.menuItemId - The ID of the menu item.
  */
 router.get('/item/:menuItemId', async (req: Request, res: Response) => {
     try {
@@ -79,7 +87,7 @@ router.get('/item/:menuItemId', async (req: Request, res: Response) => {
 
 /**
  * GET endpoint to retrieve all menu items under a specific menu.
- * @param menuId - The ID of the menu.
+ * @param req.params.menuId - The ID of the menu.
  */
 router.get('/:menuId', async (req: Request, res: Response) => {
     try {
